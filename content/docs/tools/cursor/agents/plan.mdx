@@ -1,0 +1,30 @@
+---
+title: Plan
+description: When to use Plan mode, when not to, and what a good plan includes
+---
+
+Plan mode is for designing the solution **before** making changes. It’s best when requirements are ambiguous or there are meaningful trade-offs.
+
+## When to use
+
+- You need an architecture or approach (multiple valid implementations)
+- Scope is unclear and you need discovery first
+- You need a migration/rollout strategy (backwards compatibility, risk management)
+- The change touches shared components or security-sensitive areas
+
+## When not to use
+
+- The task is small and obvious
+- You already have a clear implementation path and just need execution
+
+## Useful guide (what to ask for)
+
+A good plan should include:
+
+- **Goal** and **non-goals**
+- **Constraints** (performance, compatibility, policy/security constraints)
+- **Impacted areas** (files/modules/components)
+- **Step-by-step execution** (split-friendly, reviewable)
+- **Risks/edge cases** and mitigations
+- **Test plan** (commands + manual validation)
+

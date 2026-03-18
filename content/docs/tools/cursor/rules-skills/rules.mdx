@@ -1,0 +1,25 @@
+---
+title: Rules
+description: Using repository rules to guide Cursor consistently
+---
+
+Rules are persistent instructions that guide Cursor’s behavior in a repo (conventions, do/don’t lists, preferred patterns, validation commands).
+
+## When to use
+
+- You want consistent conventions applied automatically (structure, naming, style)
+- You want safety guardrails (no secrets, dependency policy, test requirements)
+- You want Cursor to follow repo-specific architecture patterns
+
+## When not to use
+
+- The guidance changes frequently and will become stale
+- The content contains sensitive information (never put secrets in rules)
+
+## Useful guide (what to include)
+
+- What to prefer and what to avoid
+- Where things go (file/folder conventions)
+- How to validate (lint/test/build commands)
+- PR expectations (small diffs, tests, clear descriptions)
+

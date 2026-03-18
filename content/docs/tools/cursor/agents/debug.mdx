@@ -1,0 +1,26 @@
+---
+title: Debug
+description: When to use Debug workflows and how to drive root-cause quickly
+---
+
+Use Debug workflows when you have a concrete failure (error, failing test, broken behavior) and you need systematic diagnosis.
+
+## When to use
+
+- A build/test is failing and you have logs/stack traces
+- A regression appears and you need to isolate the cause
+- The behavior is inconsistent and needs reproduction steps
+
+## When not to use
+
+- You don’t have a reproducible signal (no steps, no logs, no failing test)
+- The issue depends on sensitive data you can’t share
+
+## Useful guide (debug checklist)
+
+- Capture the exact error message and the minimal reproduction steps.
+- Identify what changed recently (commits, config changes, dependency updates).
+- Reduce scope: isolate a minimal failing test or minimal input that triggers the issue.
+- Propose hypotheses, then test them one-by-one.
+- When fixed, add a regression test if feasible.
+

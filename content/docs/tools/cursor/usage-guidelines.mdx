@@ -1,0 +1,45 @@
+---
+title: Usage guidelines
+description: Practical ways to get value from Cursor while staying safe and reviewable
+---
+
+## Use it for the right tasks
+
+- **Codebase understanding**: ask for a high-level map (modules, data flow, key entry points).
+- **Small, safe changes**: ask for focused diffs rather than broad rewrites.
+- **Refactors**: ask for a staged plan and do it in small PRs.
+- **Tests**: ask it to propose test cases first, then implement.
+- **Docs**: ask for concise docs that match existing conventions.
+
+## Ask for outputs you can verify
+
+Good prompts typically include:
+
+- The goal and non-goals
+- Constraints (performance, compatibility, style conventions)
+- Where to change (specific folders/files)
+- What “done” means (tests passing, no behavior change, migration plan, etc.)
+
+## Keep changes reviewable
+
+- Prefer incremental commits/PRs.
+- Avoid “mega diffs” that mix formatting, refactors, and feature changes.
+- Ask Cursor to summarize risks and edge cases before you submit.
+
+## Security and confidentiality
+
+Cursor is a third-party platform. Follow the company policy and secure usage principles:
+
+- Disable / opt out of any available **data sharing / model improvement / training** settings wherever technically possible.
+- Never share production credentials, API keys, private certificates, passwords, or database connection strings.
+- Avoid sharing confidential client information unless absolutely necessary and contractually permitted.
+- Prefer sanitized, redacted, or masked data and share the **minimum** code needed for the task.
+- If in doubt, escalate to your **Team Leader / Reporting Manager** before usage.
+
+## Recommended workflow
+
+- Start by asking for a **plan** (steps + impacted files).
+- Implement in small chunks and run tests.
+- Ask for a **review checklist** (what to verify before PR).
+- Treat AI output as a draft; refine it to meet Infynno quality expectations.
+

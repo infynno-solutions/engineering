@@ -1,0 +1,45 @@
+---
+title: Agent
+description: When to use Agent mode, when not to, and a practical workflow
+---
+
+Agent mode is where Cursor can **actively perform multi-step work**: exploring the repo, proposing changes, editing files, and running commands.
+
+## When to use
+
+- Multi-step work: refactors, feature implementation, cross-file updates
+- Mechanical changes that benefit from execution discipline (rename, move, repeated edits)
+- When you can validate outcomes with build/tests/lints
+
+## When not to use
+
+- Sensitive information is involved (credentials, customer data, restricted client data)
+- The scope is unclear, acceptance criteria are missing, or requirements are volatile
+- You can’t safely tolerate side effects (risk of destructive commands)
+
+## Useful guide
+
+### Bound the scope
+
+- Goal and non-goals
+- File/folder boundaries (where changes are allowed)
+- Constraints (no behavior change, performance, compatibility)
+- Definition of done (tests, lint, build, smoke check)
+
+### Use small slices
+
+- Prefer small commits/PRs over “mega diffs”
+- Separate formatting from behavior changes
+- Stop after each slice for review
+
+### Verify like normal engineering
+
+- Run the same verification you would require for any PR
+- Review diffs like a teammate’s work (look for domain mistakes)
+
+## Safety and confidentiality
+
+- Never paste tokens, keys, credentials, customer/production data.
+- Prefer minimal snippets; sanitize/redact where possible.
+- If in doubt, escalate to your **Team Leader / Reporting Manager**.
+

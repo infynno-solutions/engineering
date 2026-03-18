@@ -1,0 +1,13 @@
+{
+  "title": "Cursor",
+  "pages": [
+    "request-access",
+    "usage-guidelines",
+    "agents",
+    "plugins",
+    "rules-skills",
+    "tools-mcp"
+  ],
+  "defaultOpen": true
+}
+

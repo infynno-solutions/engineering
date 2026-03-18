@@ -1,0 +1,26 @@
+---
+title: Browser Automation
+description: When to automate browser workflows and how to keep them safe
+---
+
+Browser automation is useful for verifying UI flows, reproducing bugs, and doing repetitive web checks reliably.
+
+## When to use
+
+- Validating critical user flows (login, checkout, onboarding) across environments
+- Reproducing flaky UI bugs with consistent steps
+- Repeating manual QA steps that are time-consuming
+
+## When not to use
+
+- The workflow requires entering real secrets/credentials into an untrusted environment
+- The test environment is unstable and would produce noisy results
+- The task is better covered by unit/integration tests
+
+## Useful guide
+
+- Prefer test/staging environments and test accounts.
+- Record exact steps and expected outcomes before automating.
+- Keep automation scripts focused and deterministic.
+- Store any required credentials via approved secret management (never hardcode).
+

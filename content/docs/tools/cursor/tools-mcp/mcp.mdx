@@ -1,0 +1,25 @@
+---
+title: MCP
+description: "Model Context Protocol (MCP): integrating tools safely"
+---
+
+MCP (Model Context Protocol) connects Cursor to external tools through defined interfaces, enabling repeatable workflows beyond the repo.
+
+## When to use
+
+- You need repeatable workflows that interact with systems outside the repo
+- You need auditability (clear tool inputs/outputs)
+- You want to reduce manual, error-prone steps
+
+## When not to use
+
+- The workflow can be done safely in-repo without external access
+- Tool access increases risk (production access, sensitive datasets) without controls
+- The tool interface is not well-defined (risk of unintended side effects)
+
+## Useful guide (Infynno guardrails)
+
+- Default to least privilege and prefer read-only tools.
+- Require explicit approval for write/destructive capabilities.
+- Ensure logs/audit trails exist for actions that mutate systems.
+
