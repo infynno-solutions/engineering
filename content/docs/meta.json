@@ -1,8 +1,21 @@
 {
   "pages": [
-    "---Introduction---",
+    "---The Foundation---",
     "index",
-    "---Tools---",
+    "engineering-values-and-philosophy",
+    "onboarding-checklist",
+    "communication-protocols",
+    "project-management-workflow",
+    "the-development-lifecycle",
+    "security-and-data-privacy-basics",
+    "---Guild: Laravel---",
+    "---Guild: React---",
+    "---Guild: Node---",
+    "---Guild: Python & AI---",
+    "---Guild: UI/UX---",
+    "---Guild: Testing---",
+    "---Guild: DevOps---",
+    "---Operations & Tooling---",
     "...tools"
   ]
 }
