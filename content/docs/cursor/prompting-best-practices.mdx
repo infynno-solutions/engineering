@@ -1,0 +1,66 @@
+---
+title: Prompting Best Practices
+description: Prompt patterns, mistakes to avoid, and a productivity checklist.
+---
+
+# Prompting Best Practices
+
+## Prompt Structure That Works
+
+### Template Fields
+
+- **Task**: What to do
+- **Scope**: Files/folders to touch
+- **Constraints**: Backward compatibility, performance, coding style
+- **Output format**: Patch, explanation, tests, checklist
+
+### Example Prompt
+
+```text
+Task: Add rate limiting to login endpoint.
+Scope: @app/api/auth/login, @lib/rate-limit.
+Constraints: Redis-backed, no breaking API changes, keep p95 latency under 100ms.
+Output: implementation + tests + rollback plan.
+```
+
+## Common Mistakes to Avoid
+
+- Asking broad questions without file context
+- Applying large changes without tests
+- Ignoring project conventions already used in the repo
+- Skipping lint/build verification after AI edits
+- Accepting suggestions without reading the diff
+
+## Productivity Checklist
+
+### Before Coding
+
+- Identify relevant files with `@` references
+- Ask for current pattern analysis
+
+### During Coding
+
+- Work in small diffs
+- Request tests for each behavior change
+
+### Before Merge
+
+- Run lint, type checks, and tests
+- Ask Cursor for a final review focused on regressions
+
+## Quick Start Template
+
+Use this template in new tasks:
+
+```text
+You are working in this repository.
+Goal: <what I want built>
+Relevant files: @path/a @path/b
+Constraints: <non-negotiables>
+Do:
+1) analyze existing pattern
+2) implement
+3) add/update tests
+4) run checks and fix failures
+5) summarize changes and risks
+```

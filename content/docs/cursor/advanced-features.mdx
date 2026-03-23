@@ -1,0 +1,109 @@
+---
+title: Advanced Features
+description: Use agents, rules, skills, and MCP to scale productivity across teams.
+---
+
+# Advanced Features
+
+## Agents
+
+Agents are autonomous assistants that can explore code, run commands, and apply edits with less back-and-forth.
+
+### When to Use
+
+- Large tasks spanning multiple files
+- Repetitive workflows (review + fix + test)
+- Deep investigations where the AI needs to gather broad context first
+
+### How to Use Effectively
+
+- Assign one clear objective per agent
+- Ask for explicit deliverables (changed files, test results, risks)
+- Use parallel agents for independent workstreams, then merge outcomes
+
+### Example Prompt
+
+```text
+Use one agent to inspect API auth flow and another to inspect middleware redirects.
+Each should return:
+1) likely root causes
+2) exact files to change
+3) validation steps
+```
+
+## Rules (Project-Specific Guidance)
+
+Rules define persistent guidance for how AI should behave in your project (style, architecture, review criteria, and constraints).
+
+### Good Rule Categories
+
+- Coding standards (naming, file structure, comments)
+- Framework conventions (routing, state management, data access)
+- Safety constraints (no secret leaks, migration policies)
+- Review expectations (tests required, performance checks)
+
+### Why This Improves Productivity
+
+- Reduces repeated prompt instructions
+- Makes outputs more consistent across contributors
+- Prevents common mistakes before they happen
+
+### Example Rule Ideas
+
+- "Always add or update tests for behavior changes."
+- "Prefer existing utility patterns in `@lib` before creating new helpers."
+- "Do not introduce breaking API changes without migration notes."
+
+## Skills
+
+Skills are reusable capability bundles (instructions, workflows, and domain-specific best practices) for repeatable tasks.
+
+### Use Skills For
+
+- Documentation writing standards
+- Release note generation
+- Migration playbooks
+- Security review checklists
+
+### How to Use Effectively
+
+- Create focused skills for high-frequency tasks
+- Keep examples in each skill so outputs stay predictable
+- Version and refine skills as your team standards evolve
+
+### Example Prompt
+
+```text
+Use our handbook-writing skill to produce a new API guide section.
+Follow tone, structure, and examples from existing docs pages.
+```
+
+## MCP (Model Context Protocol)
+
+MCP connects Cursor to external tools and data sources so the AI can work with systems beyond local files.
+
+### Typical Use Cases
+
+- Issue/PR workflows in GitHub
+- Ticket lookup in project management tools
+- Internal documentation retrieval
+- Database or API diagnostics
+
+### Productivity Benefits
+
+- Fewer context switches between editor and browser
+- More accurate answers using live system context
+- Faster incident handling with direct tool access
+
+### Effective Usage Tips
+
+- Grant least-privilege access for safety
+- Keep server descriptions clear so capabilities are discoverable
+- Start read-only where possible, then enable write actions when needed
+
+### Example Prompt
+
+```text
+Using GitHub MCP, summarize open PR comments blocking release.
+Group by repository area and suggest a merge order with risks.
+```

@@ -1,0 +1,37 @@
+---
+title: Workflows
+description: Repeatable Cursor workflows for building, refactoring, and debugging.
+---
+
+# Practical Workflows
+
+## Workflow A: Build a Feature Faster
+
+1. Ask Cursor to inspect existing patterns in relevant folders.
+2. Request an implementation plan with risks.
+3. Generate code in small, reviewable chunks.
+4. Ask for tests and edge cases.
+5. Run lint/tests and request fixes for failures.
+
+## Workflow B: Safe Refactor
+
+1. Ask for dependency map and impact analysis.
+2. Perform rename/extract in one coordinated change.
+3. Ask for regression tests around touched behavior.
+4. Run full test suite and review diffs.
+
+## Workflow C: Production Bug Fix
+
+1. Provide stack trace and reproduction.
+2. Ask for top three hypotheses.
+3. Validate each with targeted checks.
+4. Apply minimal fix.
+5. Generate a postmortem summary and prevention tests.
+
+## Workflow D: Review Before Merge
+
+1. Ask Cursor for a risk-focused review on changed files only.
+2. Request findings ordered by severity.
+3. Ask for missing tests and edge cases.
+4. Resolve findings and rerun checks.
+5. Generate a concise PR summary with impact notes.

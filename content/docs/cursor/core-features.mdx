@@ -1,0 +1,139 @@
+---
+title: Core Features
+description: Everyday Cursor capabilities that deliver the biggest productivity gains.
+---
+
+# Core Features
+
+## AI Chat with Project Context
+
+Use chat for design, implementation, debugging, and code reviews.
+
+### Best Practices
+
+- Give clear goals, constraints, and expected output
+- Reference files/folders with `@` (for example, `@app/api` or `@lib/utils.ts`)
+- Ask for change + reason + test plan in one response
+
+### Example Prompts
+
+```text
+Implement pagination in @app/api/users/route.ts using cursor-based pagination.
+Constraints: keep response shape backward compatible.
+Also add tests and explain edge cases.
+```
+
+```text
+Review this function for bugs and performance issues:
+@lib/cache.ts
+Return findings ordered by severity.
+```
+
+## Inline Edit and Selection-Based Changes
+
+For small, precise edits, select code and ask Cursor to transform it.
+
+### Best For
+
+- Refactoring a function
+- Converting callback code to async/await
+- Improving naming and readability
+- Adding guard clauses and error handling
+
+### Example
+
+1. Select a large function.
+2. Ask: "Refactor this into smaller pure functions without changing behavior."
+3. Apply, then run tests.
+
+## Multi-File Refactoring
+
+Cursor can perform coordinated updates across multiple files with less manual work.
+
+### Best For
+
+- Renaming domain models
+- Splitting a monolith module into focused modules
+- Updating import paths and call sites
+
+### Prompt Pattern
+
+```text
+Rename `CustomerPlan` to `BillingPlan` across the codebase.
+Update types, imports, tests, and docs references.
+Do not change API route paths.
+```
+
+## Codebase Search and Understanding
+
+Ask Cursor to find where logic lives before making changes.
+
+### Useful Questions
+
+- "Where is authentication enforced?"
+- "Which components depend on this hook?"
+- "How does this request flow from UI to DB?"
+
+This helps avoid accidental regressions and duplicate logic.
+
+## Terminal Assistance
+
+Use Cursor to run common terminal tasks and explain failures.
+
+### Examples
+
+- Run tests and summarize failing cases
+- Run build/lint and suggest minimal fixes
+- Generate migration commands and verify output
+
+### Prompt
+
+```text
+Run the test suite, group failures by root cause, and propose the smallest safe fix for each group.
+```
+
+## Bug Triage and Debugging
+
+Cursor is strongest when you provide:
+
+### Inputs to Provide
+
+- Error message
+- Repro steps
+- Expected vs actual behavior
+- Related files
+
+### Debug Prompt Template
+
+```text
+Bug: login sometimes redirects to /signin after successful auth.
+Repro: occurs after token refresh.
+Expected: remain on current page.
+Actual: forced redirect.
+Investigate likely causes in @middleware.ts and @lib/auth.ts and propose a fix.
+```
+
+## Test Generation and Coverage Gaps
+
+Cursor can generate tests for changed behavior and identify missing edge cases.
+
+### Example Prompt
+
+```text
+Add unit tests for @lib/pricing.ts covering:
+- invalid input
+- boundary discount tiers
+- rounding behavior
+Use existing test style in @tests.
+```
+
+## Docs and Knowledge Capture
+
+Turn implementation details into docs quickly.
+
+### High-Value Outputs
+
+- API usage examples
+- Setup and troubleshooting docs
+- Architecture notes
+- Runbooks for incident recovery
