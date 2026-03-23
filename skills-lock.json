@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "handbook-writing": {
+      "source": "steveclarke/dotfiles",
+      "sourceType": "github",
+      "computedHash": "75b6bfc6d6268b96d7cbb4aa273b7902e1973fcefde92edef40853714359cd7f"
+    }
+  }
+}
