@@ -19,9 +19,9 @@ Benefits you can expect:
 - Quicker debugging and root-cause analysis
 - Better quality through review and test suggestions
 
-## Core Features and How to Use Them
+## Core Features
 
-## 1) AI Chat with Project Context
+### AI Chat with Project Context
 
 Use chat for design, implementation, debugging, and code reviews.
 
@@ -45,7 +45,7 @@ Review this function for bugs and performance issues:
 Return findings ordered by severity.
 ```
 
-## 2) Inline Edit and Selection-Based Changes
+### Inline Edit and Selection-Based Changes
 
 For small, precise edits, select code and ask Cursor to transform it.
 
@@ -62,7 +62,7 @@ Example:
 2. Ask: "Refactor this into smaller pure functions without changing behavior."
 3. Apply, then run tests.
 
-## 3) Multi-File Refactoring
+### Multi-File Refactoring
 
 Cursor can perform coordinated updates across multiple files with less manual work.
 
@@ -80,7 +80,7 @@ Update types, imports, tests, and docs references.
 Do not change API route paths.
 ```
 
-## 4) Codebase Search and Understanding
+### Codebase Search and Understanding
 
 Ask Cursor to find where logic lives before making changes.
 
@@ -92,7 +92,7 @@ Useful questions:
 
 This helps avoid accidental regressions and duplicate logic.
 
-## 5) Terminal Assistance
+### Terminal Assistance
 
 Use Cursor to run common terminal tasks and explain failures.
 
@@ -108,7 +108,7 @@ Prompt:
 Run the test suite, group failures by root cause, and propose the smallest safe fix for each group.
 ```
 
-## 6) Bug Triage and Debugging
+### Bug Triage and Debugging
 
 Cursor is strongest when you provide:
 
@@ -127,7 +127,7 @@ Actual: forced redirect.
 Investigate likely causes in @middleware.ts and @lib/auth.ts and propose a fix.
 ```
 
-## 7) Test Generation and Coverage Gaps
+### Test Generation and Coverage Gaps
 
 Cursor can generate tests for changed behavior and identify missing edge cases.
 
@@ -141,7 +141,7 @@ Add unit tests for @lib/pricing.ts covering:
 Use existing test style in @tests.
 ```
 
-## 8) Docs and Knowledge Capture
+### Docs and Knowledge Capture
 
 Turn implementation details into docs quickly.
 
@@ -152,7 +152,9 @@ High-value outputs:
 - Architecture notes
 - Runbooks for incident recovery
 
-## 9) Agents
+## Advanced Features
+
+### Agents
 
 Agents are autonomous assistants that can explore code, run commands, and apply edits with less back-and-forth.
 
@@ -178,7 +180,7 @@ Each should return:
 3) validation steps
 ```
 
-## 10) Rules (Project-Specific Guidance)
+### Rules (Project-Specific Guidance)
 
 Rules define persistent guidance for how AI should behave in your project (style, architecture, review criteria, and constraints).
 
@@ -201,7 +203,7 @@ Example rule ideas:
 - "Prefer existing utility patterns in `@lib` before creating new helpers."
 - "Do not introduce breaking API changes without migration notes."
 
-## 11) Skills
+### Skills
 
 Skills are reusable capability bundles (instructions, workflows, and domain-specific best practices) for repeatable tasks.
 
@@ -225,7 +227,7 @@ Use our handbook-writing skill to produce a new API guide section.
 Follow tone, structure, and examples from existing docs pages.
 ```
 
-## 12) MCP (Model Context Protocol)
+### MCP (Model Context Protocol)
 
 MCP connects Cursor to external tools and data sources so the AI can work with systems beyond local files.
 
@@ -257,7 +259,7 @@ Group by repository area and suggest a merge order with risks.
 
 ## Practical Workflows That Save Time
 
-## Workflow A: Build a Feature Faster
+### Workflow A: Build a Feature Faster
 
 1. Ask Cursor to inspect existing patterns in relevant folders.
 2. Request an implementation plan with risks.
@@ -265,14 +267,14 @@ Group by repository area and suggest a merge order with risks.
 4. Ask for tests and edge cases.
 5. Run lint/tests and request fixes for failures.
 
-## Workflow B: Safe Refactor
+### Workflow B: Safe Refactor
 
 1. Ask for dependency map and impact analysis.
 2. Perform rename/extract in one coordinated change.
 3. Ask for regression tests around touched behavior.
 4. Run full test suite and review diffs.
 
-## Workflow C: Production Bug Fix
+### Workflow C: Production Bug Fix
 
 1. Provide stack trace and reproduction.
 2. Ask for top three hypotheses.
