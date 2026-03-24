@@ -1,0 +1,39 @@
+---
+title: Better Auth
+description: Authentication and session management patterns for backend services.
+---
+
+# Better Auth
+
+## What it is
+
+Better Auth is an authentication framework for modern TypeScript applications, focused on practical auth flows and session handling.
+
+## Why we use it
+
+- Provides structured authentication primitives with less custom boilerplate.
+- Supports scalable session and provider-based auth strategies.
+
+## Setup in this repo
+
+Integrate Better Auth in the backend app entrypoint and connect it to the selected database/session adapter.
+
+## Team conventions
+
+- Keep auth configuration centralized and environment-driven.
+- Separate authentication concerns from business domain routes.
+- Enforce explicit authorization checks per protected route.
+
+## Example
+
+```ts
+export const authConfig = {
+  baseURL: process.env.AUTH_BASE_URL,
+  secret: process.env.AUTH_SECRET,
+};
+```
+
+## Common pitfalls
+
+- Mixing authentication and authorization logic in the same middleware without clear boundaries.
+- Missing required environment variables across environments.

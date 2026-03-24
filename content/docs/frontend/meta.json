@@ -1,4 +1,4 @@
 {
   "title": "Frontend",
-  "pages": ["react", "nextjs"]
+  "pages": ["frontend-stack", "react", "nextjs", "zustand", "react-query", "shadcn-ui"]
 }

@@ -1,0 +1,40 @@
+---
+title: shadcn/ui
+description: Re-usable UI components built on Radix and Tailwind CSS.
+---
+
+# shadcn/ui
+
+## What it is
+
+shadcn/ui is a collection of composable component primitives that you add directly into your codebase.
+
+## Why we use it
+
+- Fast UI delivery with accessible primitives.
+- Full control because components live in the project repository.
+
+## Setup in this repo
+
+Install and generate only required components. Keep shared styles and tokens centralized.
+
+## Team conventions
+
+- Prefer composition over heavy one-off custom components.
+- Keep design tokens consistent across variants.
+- Avoid direct edits in many places for the same component pattern; create wrappers when repeated.
+
+## Example
+
+```tsx
+import { Button } from "@/components/ui/button";
+
+export function SaveButton() {
+  return <Button>Save Changes</Button>;
+}
+```
+
+## Common pitfalls
+
+- Generating many unused components.
+- Inconsistent local styling that diverges from shared design tokens.

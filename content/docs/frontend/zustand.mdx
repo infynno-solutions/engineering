@@ -1,0 +1,46 @@
+---
+title: Zustand
+description: Lightweight client state management for React applications.
+---
+
+# Zustand
+
+## What it is
+
+Zustand is a minimal state management library for React that uses hooks and small store definitions.
+
+## Why we use it
+
+- Keeps global state logic simple and easy to reason about.
+- Avoids boilerplate for common UI and workflow state.
+
+## Setup in this repo
+
+Define stores under a shared location and keep one clear responsibility per store.
+
+## Team conventions
+
+- Prefer local component state first; use Zustand for shared cross-component state.
+- Keep async server-state in React Query, not in Zustand.
+- Expose actions with explicit names (`setFilter`, `resetState`, `toggleSidebar`).
+
+## Example
+
+```tsx
+import { create } from "zustand";
+
+type UiStore = {
+  sidebarOpen: boolean;
+  toggleSidebar: () => void;
+};
+
+export const useUiStore = create<UiStore>((set) => ({
+  sidebarOpen: false,
+  toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+}));
+```
+
+## Common pitfalls
+
+- Putting server data in Zustand instead of using React Query cache.
+- Creating very large stores with unrelated concerns.

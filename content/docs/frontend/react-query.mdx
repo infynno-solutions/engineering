@@ -1,0 +1,47 @@
+---
+title: React Query
+description: Server-state data fetching, caching, and synchronization patterns.
+---
+
+# React Query
+
+## What it is
+
+React Query (TanStack Query) manages async server state, caching, background refetching, and mutation flows.
+
+## Why we use it
+
+- Standardizes API data loading and cache behavior.
+- Reduces manual loading/error/refetch state handling.
+
+## Setup in this repo
+
+Create a shared query client and wrap app providers once at the root.
+
+## Team conventions
+
+- Use stable query keys grouped by feature.
+- Keep fetching logic in reusable hooks (`useUsersQuery`, `useCreateUserMutation`).
+- Invalidate only the required keys after successful mutations.
+
+## Example
+
+```tsx
+import { useQuery } from "@tanstack/react-query";
+
+export function useProjectsQuery() {
+  return useQuery({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const res = await fetch("/api/projects");
+      if (!res.ok) throw new Error("Failed to fetch projects");
+      return res.json();
+    },
+  });
+}
+```
+
+## Common pitfalls
+
+- Using unstable objects/functions directly in query keys.
+- Duplicating query keys for the same resource shape.

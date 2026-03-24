@@ -4,27 +4,43 @@ description: Central documentation for engineering workflows, standards, and pro
 icon: Rocket
 ---
 
-import Image from "next/image";
-import cursorIcon from "../../public/cursor.png";
-import coderabbitIcon from "../../public/coderabbit.png";
+import { Bot, GitPullRequest, Layers, Server, Wrench } from "lucide-react";
 
 # Quick Start
 
 Use this handbook to find practical guides, team standards, and tools that help you ship faster with confidence.
 
-## Featured Guide
+## Featured Guides
 
 <Cards>
+  <Card
+    title="Frontend Stack"
+    description="Explore React, Next.js, Zustand, React Query, and shadcn/ui standards and patterns."
+    href="/docs/frontend/frontend-stack"
+    icon={<Layers />}
+  />
+  <Card
+    title="Backend Stack"
+    description="Explore Node.js, Express, NestJS, and Better Auth architecture and conventions."
+    href="/docs/backend"
+    icon={<Server />}
+  />
+  <Card
+    title="DevOps Stack"
+    description="Explore Docker, Kubernetes, and GitHub Actions deployment and CI/CD practices."
+    href="/docs/devops"
+    icon={<Wrench />}
+  />
   <Card
     title="Cursor"
     description="Use Cursor features, agents, rules, skills, and MCP effectively to improve developer productivity."
     href="/docs/cursor/overview"
-    icon={<Image src={cursorIcon} alt="Cursor icon" width={24} height={24} />}
+    icon={<Bot />}
   />
   <Card
     title="CodeRabbit"
     description="Follow our project setup and pull request workflow for CodeRabbit reviews."
     href="/docs/coderabbit"
-    icon={<Image src={coderabbitIcon} alt="CodeRabbit icon" width={24} height={24} />}
+    icon={<GitPullRequest />}
   />
 </Cards>

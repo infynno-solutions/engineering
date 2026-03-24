@@ -2,6 +2,7 @@ import { RootProvider } from "fumadocs-ui/provider/next";
 import "./global.css";
 import { Google_Sans_Flex as FontSans } from "next/font/google";
 import type { Metadata } from "next";
+import Script from "next/script";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -19,14 +20,13 @@ export const metadata: Metadata = {
 export default function Layout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={fontSans.className} suppressHydrationWarning>
-      <head>
-        <script
-          async
-          crossOrigin="anonymous"
-          src="https://tweakcn.com/live-preview.min.js"
-        />
-      </head>
+      <head />
       <body className="flex flex-col min-h-screen">
+        <Script
+          src="https://tweakcn.com/live-preview.min.js"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+        />
         <RootProvider>{children}</RootProvider>
       </body>
     </html>
