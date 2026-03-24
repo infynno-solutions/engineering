@@ -1,8 +1,85 @@
 ---
 title: Node.js
-description: Placeholder page for Node.js standards and guidance.
+description: Node.js backend best practices for service design, runtime safety, and operability.
 ---
 
 # Node.js
 
-Coming soon.
+Node.js is the runtime foundation for backend services in this stack. This guide defines practical standards for structure, reliability, and maintainability.
+
+## What it is
+
+Node.js is a JavaScript runtime for building networked applications and services with an event-driven, non-blocking I/O model.
+
+## Best practices
+
+### Why we use it
+
+- Strong TypeScript ecosystem and tooling.
+- Efficient for I/O-heavy services.
+- Good interoperability with Express, NestJS, and auth tooling.
+
+### Setup in this repo
+
+- Use a clear module structure by feature/domain.
+- Keep environment configuration explicit and validated.
+- Keep process startup minimal and deterministic.
+
+### Team conventions
+
+- Prefer small, composable modules with explicit interfaces.
+- Separate transport (HTTP), application logic, and data access layers.
+- Keep async flows explicit with `async`/`await`.
+- Standardize error objects and response mapping at boundaries.
+- Avoid side effects in module top-level execution.
+
+### Error handling and reliability
+
+- Centralize uncaught/expected error handling at the app boundary.
+- Use request-scoped validation and guard clauses.
+- Log with structured metadata for traceability.
+- Gracefully handle shutdown signals and close resources.
+
+### Testing and validation
+
+- Unit test pure business logic.
+- Add integration tests for route-level behavior and adapters.
+- Validate config and environment assumptions during startup tests.
+
+### Abstractions and anti-patterns
+
+- Avoid giant utility modules with mixed responsibilities.
+- Avoid hiding I/O inside low-level helpers without explicit contracts.
+- Avoid swallowing async errors in promise chains.
+
+## Example
+
+```ts
+type HealthStatus = { ok: true; service: string };
+
+export async function getHealthStatus(): Promise<HealthStatus> {
+  return { ok: true, service: "api" };
+}
+```
+
+## Common pitfalls
+
+- Missing startup validation for required environment variables.
+- Mixing business logic directly into route handlers.
+- Inconsistent error mapping across endpoints.
+- Unstructured logs that are difficult to search.
+
+## References
+
+### Internal
+
+- [Backend Stack](/docs/backend)
+- [Express](/docs/backend/express)
+- [NestJS](/docs/backend/nest-js)
+- [Better Auth](/docs/backend/better-auth)
+
+### External
+
+- [Node.js Documentation](https://nodejs.org/en/docs)
+- [Node.js API Reference](https://nodejs.org/api/)
+- [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)

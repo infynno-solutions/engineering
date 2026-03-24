@@ -1,6 +1,6 @@
 ---
 title: Zustand
-description: Lightweight client state management for React applications.
+description: Zustand best practices for shared client state in React applications.
 ---
 
 # Zustand
@@ -9,20 +9,44 @@ description: Lightweight client state management for React applications.
 
 Zustand is a minimal state management library for React that uses hooks and small store definitions.
 
-## Why we use it
+## Best practices
 
-- Keeps global state logic simple and easy to reason about.
-- Avoids boilerplate for common UI and workflow state.
+### Why we use it
 
-## Setup in this repo
+- Keeps global client-state logic simple and explicit.
+- Avoids boilerplate for UI/workflow states that cross component boundaries.
+- Works well with React hooks and TypeScript inference.
 
-Define stores under a shared location and keep one clear responsibility per store.
+### Setup in this repo
 
-## Team conventions
+- Define stores in shared state modules with one clear responsibility per store.
+- Keep store shape stable and action names explicit.
+- Export hook selectors for common read paths.
 
-- Prefer local component state first; use Zustand for shared cross-component state.
+### Team conventions
+
+- Prefer local component state first; use Zustand only for shared client state.
 - Keep async server-state in TanStack Query, not in Zustand.
 - Expose actions with explicit names (`setFilter`, `resetState`, `toggleSidebar`).
+- Prefer selector-based reads to avoid unnecessary rerenders.
+
+### Error handling and reliability
+
+- Validate external payloads before writing to store.
+- Keep default state values deterministic and serializable where possible.
+- Provide reset actions for recoverability in complex workflows.
+
+### Testing and validation
+
+- Unit test stores for default state and action transitions.
+- Verify selectors and derived state behavior.
+- Test integration points with UI for shared state flows.
+
+### Abstractions and anti-patterns
+
+- Avoid large monolithic stores with unrelated concerns.
+- Avoid writing server cache copies into Zustand.
+- Avoid hidden state coupling across distant features.
 
 ## Example
 
@@ -44,3 +68,19 @@ export const useUiStore = create<UiStore>((set) => ({
 
 - Putting server data in Zustand instead of using TanStack Query cache.
 - Creating very large stores with unrelated concerns.
+- Updating entire store objects when only a small slice changes.
+- Leaving actions untyped or ambiguously named.
+
+## References
+
+### Internal
+
+- [Frontend Stack](/docs/frontend/frontend-stack)
+- [React](/docs/frontend/react)
+- [TanStack Query](/docs/frontend/react-query)
+
+### External
+
+- [Zustand Documentation](https://zustand.docs.pmnd.rs/)
+- [Zustand TypeScript Guide](https://zustand.docs.pmnd.rs/guides/typescript)
+- [Zustand Slices Pattern](https://zustand.docs.pmnd.rs/guides/slices-pattern)

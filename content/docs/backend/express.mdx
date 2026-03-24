@@ -1,8 +1,87 @@
 ---
 title: Express
-description: Placeholder page for Express standards and guidance.
+description: Express best practices for middleware architecture, API consistency, and reliability.
 ---
 
 # Express
 
-Coming soon.
+Express is our lightweight HTTP framework option for APIs and services that need flexible middleware-first architecture.
+
+## What it is
+
+Express is a minimal Node.js web framework for routing, middleware composition, and HTTP server concerns.
+
+## Best practices
+
+### Why we use it
+
+- Minimal abstraction with high flexibility.
+- Large middleware ecosystem and straightforward request lifecycle.
+- Fits well for focused APIs and service adapters.
+
+### Setup in this repo
+
+- Organize by feature modules and route groups.
+- Keep app bootstrap, middleware registration, and route wiring separated.
+- Centralize shared middleware (validation, auth, error mapping, logging).
+
+### Team conventions
+
+- Keep controllers thin and delegate business logic to services.
+- Validate input at boundaries (params, query, body).
+- Use consistent response shape for success and error paths.
+- Keep middleware order explicit and documented.
+
+### Error handling and reliability
+
+- Use a global error handler middleware.
+- Ensure async route errors propagate via `next` or wrapper helpers.
+- Avoid leaking internal stack traces in public responses.
+
+### Testing and validation
+
+- Add integration tests for routes and middleware chains.
+- Validate auth/authorization middleware behavior with explicit cases.
+- Keep unit tests focused on service logic outside Express internals.
+
+### Abstractions and anti-patterns
+
+- Avoid placing business logic directly in middleware stacks.
+- Avoid global mutable state in middleware modules.
+- Avoid ad hoc status code usage; standardize API semantics.
+
+## Example
+
+```ts
+import express from "express";
+
+const app = express();
+app.use(express.json());
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({ ok: true, service: "api" });
+});
+
+export default app;
+```
+
+## Common pitfalls
+
+- Async handlers that fail silently without centralized error forwarding.
+- Inconsistent validation across routes.
+- Route files growing without domain-level separation.
+- Middleware coupling causing hard-to-debug request flow.
+
+## References
+
+### Internal
+
+- [Backend Stack](/docs/backend)
+- [Node.js](/docs/backend/nodejs)
+- [Better Auth](/docs/backend/better-auth)
+
+### External
+
+- [Express Documentation](https://expressjs.com/)
+- [Express Error Handling](https://expressjs.com/en/guide/error-handling.html)
+- [Express Middleware Guide](https://expressjs.com/en/guide/using-middleware.html)

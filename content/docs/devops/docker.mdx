@@ -1,8 +1,85 @@
 ---
 title: Docker
-description: Placeholder page for Docker standards and guidance.
+description: Docker best practices for container build quality, security, and local developer workflows.
 ---
 
 # Docker
 
-Coming soon.
+Docker is our baseline containerization tool for consistent local development, reproducible builds, and deployment packaging.
+
+## What it is
+
+Docker packages applications and dependencies into portable container images that run consistently across environments.
+
+## Best practices
+
+### Why we use it
+
+- Standardized runtime packaging across developer machines and environments.
+- Predictable build/deploy artifacts.
+- Strong ecosystem and tooling support.
+
+### Setup in this repo
+
+- Use multi-stage builds for production images.
+- Keep Dockerfiles close to services they package.
+- Keep image tags/versioning aligned with CI outputs.
+
+### Team conventions
+
+- Use slim base images and pin major versions.
+- Keep layers cache-friendly by ordering stable steps first.
+- Run processes as non-root where possible.
+- Keep container startup deterministic and health-check friendly.
+
+### Error handling and reliability
+
+- Fail build early when dependencies or required files are missing.
+- Use explicit health checks for service readiness.
+- Avoid mutable runtime assumptions in containers.
+
+### Testing and validation
+
+- Validate images via local container run checks.
+- Ensure startup, liveness/readiness, and env var behavior are tested.
+- Scan images in CI for known vulnerabilities.
+
+### Abstractions and anti-patterns
+
+- Avoid bloated images with unnecessary tools in production layers.
+- Avoid mixing build-time and runtime concerns.
+- Avoid unversioned base images in long-lived services.
+
+## Example
+
+```bash
+FROM node:20-alpine AS base
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+COPY . .
+CMD ["node", "dist/main.js"]
+```
+
+## Common pitfalls
+
+- Large images due to unnecessary files/dependencies.
+- Slow rebuilds from poor layer ordering.
+- Running apps as root in production containers.
+- Missing health checks for orchestration systems.
+
+## References
+
+### Internal
+
+- [DevOps Stack](/docs/devops)
+- [Kubernetes](/docs/devops/kubernetes)
+- [GitHub Actions](/docs/devops/github-actions)
+
+### External
+
+- [Docker Docs](https://docs.docker.com/)
+- [Dockerfile Best Practices](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/)
+- [Docker Buildx](https://docs.docker.com/build/buildx/)

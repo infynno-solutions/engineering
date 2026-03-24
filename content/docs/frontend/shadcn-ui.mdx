@@ -1,6 +1,6 @@
 ---
 title: shadcn/ui
-description: Re-usable UI components built on Radix and Tailwind CSS.
+description: shadcn/ui best practices for composable, accessible, and consistent UI systems.
 ---
 
 # shadcn/ui
@@ -9,20 +9,44 @@ description: Re-usable UI components built on Radix and Tailwind CSS.
 
 shadcn/ui is a collection of composable component primitives that you add directly into your codebase.
 
-## Why we use it
+## Best practices
+
+### Why we use it
 
 - Fast UI delivery with accessible primitives.
-- Full control because components live in the project repository.
+- Full ownership because components live in the repository.
+- Strong compatibility with Tailwind utility workflows.
 
-## Setup in this repo
+### Setup in this repo
 
-Install and generate only required components. Keep shared styles and tokens centralized.
+- Install and generate only required components.
+- Keep shared styles, design tokens, and variants centralized.
+- Reuse base UI wrappers for repeated business-specific patterns.
 
-## Team conventions
+### Team conventions
 
 - Prefer composition over heavy one-off custom components.
 - Keep design tokens consistent across variants.
-- Avoid direct edits in many places for the same component pattern; create wrappers when repeated.
+- Avoid direct edits in many places for the same pattern; create wrappers when repeated.
+- Keep semantic HTML and accessibility attributes explicit.
+
+### Error handling and reliability
+
+- Treat accessibility regressions as defects.
+- Keep interaction states (`disabled`, `loading`, `error`) explicit in components.
+- Use consistent focus and keyboard behavior across interactive elements.
+
+### Testing and validation
+
+- Test critical interaction flows (dialogs, forms, menus).
+- Validate keyboard and focus behavior for accessibility.
+- Visual-check variant consistency in key reusable components.
+
+### Abstractions and anti-patterns
+
+- Avoid over-customizing generated primitives without a shared abstraction.
+- Avoid duplicating variant logic across multiple components.
+- Avoid ad hoc class strings when a reusable variant pattern is warranted.
 
 ## Example
 
@@ -38,3 +62,17 @@ export function SaveButton() {
 
 - Generating many unused components.
 - Inconsistent local styling that diverges from shared design tokens.
+- Accessibility drift when wrappers hide semantic behavior.
+
+## References
+
+### Internal
+
+- [Frontend Stack](/docs/frontend/frontend-stack)
+- [React](/docs/frontend/react)
+
+### External
+
+- [shadcn/ui Documentation](https://ui.shadcn.com/docs)
+- [Radix UI Primitives](https://www.radix-ui.com/primitives)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)

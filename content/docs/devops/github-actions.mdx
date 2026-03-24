@@ -1,8 +1,94 @@
 ---
 title: GitHub Actions
-description: Placeholder page for GitHub Actions standards and guidance.
+description: GitHub Actions best practices for CI/CD reliability, security, and maintainable workflows.
 ---
 
 # GitHub Actions
 
-Coming soon.
+GitHub Actions is our CI/CD platform for validation pipelines, automated checks, and release workflows.
+
+## What it is
+
+GitHub Actions is a workflow automation system that runs jobs based on repository events (push, pull request, release, schedule, etc.).
+
+## Best practices
+
+### Why we use it
+
+- Native integration with GitHub repositories and pull requests.
+- Flexible multi-stage CI/CD workflows.
+- Good support for caching, reusable workflows, and environment protection.
+
+### Setup in this repo
+
+- Keep workflows in `.github/workflows` with clear purpose per file.
+- Separate CI validation from deployment workflows.
+- Use reusable workflows for repeated patterns where practical.
+
+### Team conventions
+
+- Pin action versions to stable major/minor tags.
+- Use matrix builds for multi-runtime test coverage where needed.
+- Keep secrets in GitHub Environments/Secrets, never in workflow code.
+- Fail fast on lint/test/build before expensive deployment steps.
+
+### Error handling and reliability
+
+- Add clear job names and step-level logging for quick debugging.
+- Use required checks for merge protection.
+- Use concurrency controls to prevent duplicate deploy races.
+
+### Testing and validation
+
+- Validate workflow syntax and branch trigger behavior.
+- Verify caching strategy and artifact handoff between jobs.
+- Test release/deploy workflows in controlled environments before production.
+
+### Abstractions and anti-patterns
+
+- Avoid one giant workflow doing everything.
+- Avoid copy-pasting identical logic across many workflow files.
+- Avoid unbounded permissions on workflow tokens.
+
+## Example
+
+```yaml
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run lint && npm test && npm run build
+```
+
+## Common pitfalls
+
+- Flaky pipelines from missing cache/infrastructure assumptions.
+- Over-permissioned workflows and secrets exposure risk.
+- Deployment and CI concerns mixed in one hard-to-maintain file.
+- Missing branch protection tied to required status checks.
+
+## References
+
+### Internal
+
+- [DevOps Stack](/docs/devops)
+- [Docker](/docs/devops/docker)
+- [Kubernetes](/docs/devops/kubernetes)
+
+### External
+
+- [GitHub Actions Documentation](https://docs.github.com/actions)
+- [Workflow Syntax](https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions)
+- [Security Hardening for GitHub Actions](https://docs.github.com/actions/security-guides/security-hardening-for-github-actions)

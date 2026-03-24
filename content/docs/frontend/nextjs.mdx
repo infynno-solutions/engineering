@@ -1,8 +1,99 @@
 ---
 title: Next.js
-description: Placeholder page for Next.js standards and guidance.
+description: Next.js best practices for routing, rendering, data flow, and operations.
 ---
 
 # Next.js
 
-Coming soon.
+Next.js is our primary React framework for application structure, routing, rendering modes, and deployment-ready conventions.
+
+## What it is
+
+Next.js provides app routing, server/client rendering patterns, server actions, middleware, and build tooling for modern React applications.
+
+## Best practices
+
+### Why we use it
+
+- Strong defaults for production-ready React apps.
+- App Router enables layout composition and route-level ownership.
+- Integrates cleanly with server-side rendering and API routes.
+
+### Setup in this repo
+
+- Use App Router patterns and keep route segments domain-oriented.
+- Keep shared app shell/layout concerns in top-level layout files.
+- Use environment variables through documented Next.js conventions.
+
+### Team conventions
+
+- Default to server components where interaction is not required.
+- Use client components only for interactivity and browser-only APIs.
+- Keep API route contracts explicit and typed.
+- Centralize reusable data-access logic instead of duplicating fetch code.
+- Pair server rendering with TanStack Query client cache when hybrid flows are needed.
+
+### Error handling and reliability
+
+- Use route-level error boundaries where appropriate.
+- Handle not-found and empty states explicitly.
+- Validate server inputs and guard against invalid query params.
+
+### Testing and validation
+
+- Verify route behavior, loading states, and API contracts.
+- Add integration tests for middleware/auth redirects on critical paths.
+- Run lint/build checks before merge for route and bundle regressions.
+
+### Abstractions and anti-patterns
+
+- Avoid turning every component into a client component by default.
+- Avoid duplicating fetch logic across server and client paths.
+- Keep route structure meaningful; do not over-nest without ownership benefit.
+
+## Example
+
+```tsx
+// app/projects/page.tsx
+export default async function ProjectsPage() {
+  const res = await fetch("https://example.com/api/projects", {
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to load projects");
+
+  const projects = (await res.json()) as Array<{ id: string; name: string }>;
+
+  return (
+    <main>
+      <h1 className="text-xl font-semibold">Projects</h1>
+      <ul className="mt-4 space-y-2">
+        {projects.map((project) => (
+          <li key={project.id}>{project.name}</li>
+        ))}
+      </ul>
+    </main>
+  );
+}
+```
+
+## Common pitfalls
+
+- Marking high-level layouts as client components unnecessarily.
+- Inconsistent cache strategies across similar routes.
+- Mixing business logic directly inside route files without reuse boundaries.
+- Missing error/loading/empty states in route segments.
+
+## References
+
+### Internal
+
+- [Frontend Stack](/docs/frontend/frontend-stack)
+- [React](/docs/frontend/react)
+- [TanStack Query](/docs/frontend/react-query)
+
+### External
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Next.js App Router](https://nextjs.org/docs/app)
+- [Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components)
+- [Data Fetching Patterns](https://nextjs.org/docs/app/building-your-application/data-fetching)

@@ -1,8 +1,96 @@
 ---
 title: Kubernetes
-description: Placeholder page for Kubernetes standards and guidance.
+description: Kubernetes best practices for deployment reliability, scaling, and secure cluster operations.
 ---
 
 # Kubernetes
 
-Coming soon.
+Kubernetes is our orchestration layer for running, scaling, and operating containerized workloads in resilient environments.
+
+## What it is
+
+Kubernetes is a container orchestration platform that manages workload scheduling, scaling, service discovery, and runtime health.
+
+## Best practices
+
+### Why we use it
+
+- Standardized deployment and scaling patterns.
+- Built-in primitives for availability and rollout safety.
+- Strong ecosystem for observability and operations.
+
+### Setup in this repo
+
+- Define manifests/Helm values per environment with clear ownership.
+- Keep config, secrets, and runtime resources separated.
+- Standardize namespace and labeling conventions.
+
+### Team conventions
+
+- Always define resource requests/limits.
+- Use readiness/liveness probes on services.
+- Use rolling updates with safe disruption policies.
+- Keep deployment config versioned with application changes.
+
+### Error handling and reliability
+
+- Fail fast with probe-driven health signaling.
+- Use retries/timeouts/circuit controls at application and ingress layers.
+- Keep rollback strategy explicit for deployment failures.
+
+### Testing and validation
+
+- Validate manifests before apply (schema/lint checks).
+- Test rollout and rollback in pre-production environments.
+- Verify autoscaling and disruption behavior for critical workloads.
+
+### Abstractions and anti-patterns
+
+- Avoid shipping defaults without production-safe resource settings.
+- Avoid unbounded horizontal scaling without backend capacity checks.
+- Avoid manual one-off cluster changes outside version control.
+
+## Example
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/example/api:latest
+          ports:
+            - containerPort: 3000
+```
+
+## Common pitfalls
+
+- Missing probes and resource limits.
+- Configuration drift from manual cluster edits.
+- Overly permissive RBAC policies.
+- Rollouts without clear rollback paths.
+
+## References
+
+### Internal
+
+- [DevOps Stack](/docs/devops)
+- [Docker](/docs/devops/docker)
+- [GitHub Actions](/docs/devops/github-actions)
+
+### External
+
+- [Kubernetes Documentation](https://kubernetes.io/docs/home/)
+- [Kubernetes Concepts](https://kubernetes.io/docs/concepts/)
+- [Production Best Practices](https://kubernetes.io/docs/setup/best-practices/)

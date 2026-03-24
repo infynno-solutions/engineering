@@ -1,8 +1,87 @@
 ---
 title: NestJS
-description: Placeholder page for NestJS standards and guidance.
+description: NestJS best practices for modular architecture, DI boundaries, and API maintainability.
 ---
 
 # NestJS
 
-Coming soon.
+NestJS is our structured backend framework option when we need strong module boundaries, dependency injection, and scalable API architecture.
+
+## What it is
+
+NestJS is a TypeScript-first Node.js framework built around modules, providers, decorators, and dependency injection.
+
+## Best practices
+
+### Why we use it
+
+- Enforces clear architecture for medium/large services.
+- Built-in patterns for controllers, providers, and modules.
+- Excellent TypeScript ergonomics and testability.
+
+### Setup in this repo
+
+- Use feature modules as bounded contexts.
+- Keep provider registration explicit per module.
+- Separate DTO validation, service logic, and persistence access.
+
+### Team conventions
+
+- Controllers handle transport concerns only.
+- Services contain business logic and orchestration.
+- Repositories/adapters isolate data source specifics.
+- Avoid cross-module leakage by exporting only required providers.
+
+### Error handling and reliability
+
+- Use global exception filters and validation pipes.
+- Standardize API errors and status mapping.
+- Keep auth guards and role checks explicit at controller boundaries.
+
+### Testing and validation
+
+- Unit test providers/services in isolation.
+- Integration test module wiring for critical features.
+- E2E test auth and route guard behavior for key workflows.
+
+### Abstractions and anti-patterns
+
+- Avoid dumping all providers into a single module.
+- Avoid circular dependencies; refactor boundaries when they appear.
+- Avoid business logic in decorators/guards beyond access control.
+
+## Example
+
+```ts
+import { Controller, Get } from "@nestjs/common";
+
+@Controller("health")
+export class HealthController {
+  @Get()
+  getHealth() {
+    return { ok: true, service: "api" };
+  }
+}
+```
+
+## Common pitfalls
+
+- Overly broad modules with weak ownership boundaries.
+- Hidden dependencies due to implicit exports/imports.
+- Validation missing on DTOs for external input.
+- Controller methods growing into business orchestration.
+
+## References
+
+### Internal
+
+- [Backend Stack](/docs/backend)
+- [Node.js](/docs/backend/nodejs)
+- [Better Auth](/docs/backend/better-auth)
+
+### External
+
+- [NestJS Documentation](https://docs.nestjs.com/)
+- [NestJS Fundamentals](https://docs.nestjs.com/first-steps)
+- [NestJS Validation](https://docs.nestjs.com/techniques/validation)
+- [NestJS Exception Filters](https://docs.nestjs.com/exception-filters)

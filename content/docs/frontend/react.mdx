@@ -1,8 +1,93 @@
 ---
 title: React
-description: Placeholder page for React standards and guidance.
+description: React best practices, architecture patterns, and team conventions.
 ---
 
 # React
 
-Coming soon.
+React is the foundation of our frontend UI architecture. We use it with a component-first approach, clear state boundaries, and predictable rendering behavior.
+
+## What it is
+
+React is a component library for building interactive UIs with declarative rendering, composition, and stateful hooks.
+
+## Best practices
+
+### Why we use it
+
+- Encourages reusable UI composition via components.
+- Works well with Next.js, TanStack Query, and modern TypeScript tooling.
+- Enables predictable UI updates through explicit state and props.
+
+### Setup in this repo
+
+- Use function components with hooks.
+- Keep components colocated by domain where possible.
+- Prefer strict TypeScript types for component APIs and props.
+
+### Team conventions
+
+- Prefer server state in TanStack Query, client UI state in local state or Zustand.
+- Keep props small and explicit; avoid large pass-through prop bags.
+- Split presentational and heavy container concerns when complexity grows.
+- Use stable keys and avoid index keys for dynamic lists.
+- Keep side effects inside `useEffect` only when required.
+
+### Error handling and reliability
+
+- Fail fast on invalid props and unexpected states.
+- Handle async/error UI states explicitly (loading, empty, error, success).
+- Avoid unguarded assumptions around optional data.
+
+### Testing and validation
+
+- Prefer behavior-driven tests with React Testing Library.
+- Test visible UI outcomes over implementation details.
+- Cover critical state transitions and edge cases.
+
+### Abstractions and anti-patterns
+
+- Favor composition over premature abstraction.
+- Avoid prop drilling through many layers; use context selectively for stable dependencies.
+- Avoid copying server state into local state unless intentional and documented.
+
+## Example
+
+```tsx
+type UserCardProps = {
+  name: string;
+  role?: string;
+};
+
+export function UserCard({ name, role }: UserCardProps) {
+  return (
+    <article className="rounded-lg border p-4">
+      <h3 className="text-base font-semibold">{name}</h3>
+      <p className="text-sm text-muted-foreground">{role ?? "Team Member"}</p>
+    </article>
+  );
+}
+```
+
+## Common pitfalls
+
+- Using effects for pure derivations that should be computed during render.
+- Over-centralizing all state instead of keeping state close to usage.
+- Creating complex abstractions before repeated use-cases are clear.
+- Missing stable list keys causing subtle UI bugs.
+
+## References
+
+### Internal
+
+- [Frontend Stack](/docs/frontend/frontend-stack)
+- [Next.js](/docs/frontend/nextjs)
+- [TanStack Query](/docs/frontend/react-query)
+- [Zustand](/docs/frontend/zustand)
+
+### External
+
+- [React Docs](https://react.dev/learn)
+- [React Reference](https://react.dev/reference/react)
+- [Rules of Hooks](https://react.dev/reference/rules/rules-of-hooks)
+- [Rendering Lists](https://react.dev/learn/rendering-lists)
