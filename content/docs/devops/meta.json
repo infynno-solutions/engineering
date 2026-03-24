@@ -1,0 +1,4 @@
+{
+  "title": "DevOps",
+  "pages": ["index", "docker", "kubernetes", "github-actions"]
+}

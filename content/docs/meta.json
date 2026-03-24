@@ -3,6 +3,10 @@
   "pages": [
     "---Introduction---",
     "index",
+    "---Tech Stack---",
+    "frontend",
+    "backend",
+    "devops",
     "---Tools---",
     "cursor",
     "coderabbit"
