@@ -1,28 +1,90 @@
 ---
-title: React Query
-description: Server-state data fetching, caching, and synchronization patterns.
+title: TanStack Query
+description: Comprehensive TanStack Query best practices based on TkDodo's full series.
 ---
 
-# React Query
+# TanStack Query
+
+TanStack Query is our default async server-state manager for React apps. This guide consolidates practical team conventions from TkDodo's complete series (all 32 entries, including `#8a`) and adapts them to TanStack Query naming and v5-style usage.
 
 ## What it is
 
-React Query (TanStack Query) manages async server state, caching, background refetching, and mutation flows.
+- Treat TanStack Query as **server-state orchestration**, not as a generic local state store.
+- Keep **server state** and **client state** separate; copy server data into local state only when deliberate (for example, form initialization).
+- Think declaratively: **query keys drive fetches**; avoid imperative "refetch with different params".
+- Prefer tuning **`staleTime`** over disabling useful defaults like focus/reconnect refetch.
+- Use custom hooks or `queryOptions` factories to keep query key + query function + options colocated.
 
-## Why we use it
+## Best practices
 
-- Standardizes API data loading and cache behavior.
-- Reduces manual loading/error/refetch state handling.
+### Why we use it
 
-## Setup in this repo
+- Use array keys and structure from broad to specific, e.g. `['todos', 'list', filters]`, `['todos', 'detail', id]`.
+- Include every query dependency in the key.
+- Never share the same key between `useQuery` and `useInfiniteQuery`.
+- Prefer key factories per feature and colocate them with query code.
+- For complex apps, consider object-style keys for clearer fuzzy matching and context typing.
 
-Create a shared query client and wrap app providers once at the root.
+### Setup in this repo
 
-## Team conventions
+- Understand default behavior (`staleTime: 0`, background refetch on mount/focus/reconnect).
+- Show stale data first when reasonable; avoid replacing useful stale UI with full-screen errors.
+- Use `gcTime` as a cache cleanup control; change it rarely.
+- For websocket-driven or push-updated UIs, increase `staleTime` significantly (sometimes `Infinity`) and invalidate explicitly on events.
+- Use `enabled` for dependent queries and "wait for user input" workflows.
 
-- Use stable query keys grouped by feature.
-- Keep fetching logic in reusable hooks (`useUsersQuery`, `useCreateUserMutation`).
-- Invalidate only the required keys after successful mutations.
+### Team conventions
+
+- Prefer `select` for data transformation and observer-level subscriptions.
+- Keep selectors stable (`useCallback` or extracted function) when transformations are expensive.
+- For heavy transforms used by many observers, add external memoization around the transform.
+- Use `select` for partial subscriptions to reduce rerenders without splitting cache entries.
+
+### Error handling and status checks
+
+- Ensure query functions throw rejected promises for real failures (`fetch` users must throw on `!response.ok`).
+- In many UX flows, check for data first, then error, then pending/loading.
+- Use `throwOnError` with Error Boundaries for coarse-grained handling.
+- Use global `QueryCache`/`MutationCache` callbacks for one-time toast/monitoring side effects.
+
+### Mutations and invalidation
+
+- Prefer invalidation as the default post-mutation strategy; direct cache writes only when response data is authoritative and easy to merge.
+- Keep mutation logic-side effects (invalidation/cache updates) in mutation callbacks; keep UI side effects near UI call sites.
+- Return/await invalidation promises only when UX needs mutation to remain pending until refetch finishes.
+- For optimistic updates, cancel overlapping queries before optimistic writes.
+- In concurrent optimistic scenarios, avoid over-invalidation by skipping redundant invalidations when related mutations are still running.
+
+### TypeScript safety patterns
+
+- Let inference work: type API layer return values, avoid manually supplying `useQuery` generics unless required.
+- Narrow unknown errors (`instanceof Error`) and runtime-validate API payloads for critical paths (for example with schemas).
+- Prefer `queryOptions` for reusable type-safe query definitions.
+- Use strongly typed key/query factories for consistent key usage and safer `QueryFunctionContext`.
+
+### Forms, router, offline, and infinite queries
+
+- **Router loaders + TanStack Query:** pre-seed cache early in loaders, then read with query hooks in components.
+- **Forms:** either
+  - treat server values as initial defaults and disable unnecessary background updates, or
+  - keep server + draft states separate and derive displayed values.
+- **Offline/network modes:** choose `online`, `always`, or `offlineFirst` intentionally per query/mutation behavior.
+- **Seeding detail caches:** use pull (`initialData` from list cache + `initialDataUpdatedAt`) or push approaches based on list size/churn.
+
+### Testing guidelines
+
+- Use one `QueryClient` per test for isolation.
+- Disable retries in tests unless explicitly testing retry behavior.
+- Prefer network-level mocking (for example MSW) over client implementation mocking.
+- Always await settled query states before asserting.
+
+### Abstractions and anti-patterns
+
+- Keep TanStack Query config shared and stable via a single app-level `QueryClientProvider`.
+- Use feature-local query factories (`queryOptions` + key helpers) instead of global key constants.
+- Default to invalidation over manual cache surgery.
+- Use `select` only when needed for real rendering/perf benefits.
+- Keep docs/code terminology consistent: prefer **TanStack Query** over legacy "React Query".
 
 ## Example
 
@@ -43,5 +105,54 @@ export function useProjectsQuery() {
 
 ## Common pitfalls
 
-- Using unstable objects/functions directly in query keys.
-- Duplicating query keys for the same resource shape.
+- Query keys and query function dependencies drifting out of sync.
+- Treating query cache as local editable state.
+- Overusing optimistic updates for complex flows.
+- Recreating `QueryClient` accidentally and losing cache state.
+- Using `initialData` where `placeholderData` is intended.
+- Hiding fetch errors by returning resolved promises from `queryFn` catch blocks.
+
+## References
+
+### Complete TkDodo series
+
+### Foundational Patterns
+
+- [#1: Practical React Query](https://tkdodo.eu/blog/practical-react-query)
+- [#2: React Query Data Transformations](https://tkdodo.eu/blog/react-query-data-transformations)
+- [#3: React Query Render Optimizations](https://tkdodo.eu/blog/react-query-render-optimizations)
+- [#4: Status Checks in React Query](https://tkdodo.eu/blog/status-checks-in-react-query)
+- [#5: Testing React Query](https://tkdodo.eu/blog/testing-react-query)
+- [#6: React Query and TypeScript](https://tkdodo.eu/blog/react-query-and-type-script)
+- [#7: Using WebSockets with React Query](https://tkdodo.eu/blog/using-web-sockets-with-react-query)
+
+### Keys, Context, Data Seeding, and State Design
+
+- [#8: Effective React Query Keys](https://tkdodo.eu/blog/effective-react-query-keys)
+- [#8a: Leveraging the Query Function Context](https://tkdodo.eu/blog/leveraging-the-query-function-context)
+- [#9: Placeholder and Initial Data in React Query](https://tkdodo.eu/blog/placeholder-and-initial-data-in-react-query)
+- [#10: React Query as a State Manager](https://tkdodo.eu/blog/react-query-as-a-state-manager)
+- [#11: React Query Error Handling](https://tkdodo.eu/blog/react-query-error-handling)
+- [#12: Mastering Mutations in React Query](https://tkdodo.eu/blog/mastering-mutations-in-react-query)
+- [#13: Offline React Query](https://tkdodo.eu/blog/offline-react-query)
+- [#14: React Query and Forms](https://tkdodo.eu/blog/react-query-and-forms)
+- [#15: React Query FAQs](https://tkdodo.eu/blog/react-query-fa-qs)
+- [#16: React Query meets React Router](https://tkdodo.eu/blog/react-query-meets-react-router)
+- [#17: Seeding the Query Cache](https://tkdodo.eu/blog/seeding-the-query-cache)
+- [#18: Inside React Query](https://tkdodo.eu/blog/inside-react-query)
+
+### Advanced Type Safety, API Design, and Performance
+
+- [#19: Type-safe React Query](https://tkdodo.eu/blog/type-safe-react-query)
+- [#20: You Might Not Need React Query](https://tkdodo.eu/blog/you-might-not-need-react-query)
+- [#21: Thinking in React Query](https://tkdodo.eu/blog/thinking-in-react-query)
+- [#22: React Query and React Context](https://tkdodo.eu/blog/react-query-and-react-context)
+- [#23: Why You Want React Query](https://tkdodo.eu/blog/why-you-want-react-query)
+- [#24: The Query Options API](https://tkdodo.eu/blog/the-query-options-api)
+- [#25: Automatic Query Invalidation after Mutations](https://tkdodo.eu/blog/automatic-query-invalidation-after-mutations)
+- [#26: How Infinite Queries work](https://tkdodo.eu/blog/how-infinite-queries-work)
+- [#27: React Query API Design - Lessons Learned](https://tkdodo.eu/blog/react-query-api-design-lessons-learned)
+- [#28: React Query - The Bad Parts](https://tkdodo.eu/blog/react-query-the-bad-parts)
+- [#29: Concurrent Optimistic Updates in React Query](https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query)
+- [#30: React Query Selectors, Supercharged](https://tkdodo.eu/blog/react-query-selectors-supercharged)
+- [#31: Creating Query Abstractions](https://tkdodo.eu/blog/creating-query-abstractions)

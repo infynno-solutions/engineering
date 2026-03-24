@@ -21,7 +21,7 @@ Define stores under a shared location and keep one clear responsibility per stor
 ## Team conventions
 
 - Prefer local component state first; use Zustand for shared cross-component state.
-- Keep async server-state in React Query, not in Zustand.
+- Keep async server-state in TanStack Query, not in Zustand.
 - Expose actions with explicit names (`setFilter`, `resetState`, `toggleSidebar`).
 
 ## Example
@@ -42,5 +42,5 @@ export const useUiStore = create<UiStore>((set) => ({
 
 ## Common pitfalls
 
-- Putting server data in Zustand instead of using React Query cache.
+- Putting server data in Zustand instead of using TanStack Query cache.
 - Creating very large stores with unrelated concerns.
