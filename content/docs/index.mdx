@@ -4,7 +4,8 @@ description: Central documentation for engineering workflows, standards, and pro
 icon: Rocket
 ---
 
-import { Sparkles } from "lucide-react";
+import Image from "next/image";
+import cursorIcon from "../../public/cursor.png";
 
 # Quick Start
 
@@ -17,6 +18,6 @@ Use this handbook to find practical guides, team standards, and tools that help 
     title="Cursor"
     description="Use Cursor features, agents, rules, skills, and MCP effectively to improve developer productivity."
     href="/docs/cursor/overview"
-    icon={<Sparkles />}
+    icon={<Image src={cursorIcon} alt="Cursor icon" width={24} height={24} />}
   />
 </Cards>
