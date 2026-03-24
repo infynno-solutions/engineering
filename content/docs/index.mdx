@@ -6,6 +6,7 @@ icon: Rocket
 
 import Image from "next/image";
 import cursorIcon from "../../public/cursor.png";
+import coderabbitIcon from "../../public/coderabbit.png";
 
 # Quick Start
 
@@ -19,5 +20,11 @@ Use this handbook to find practical guides, team standards, and tools that help 
     description="Use Cursor features, agents, rules, skills, and MCP effectively to improve developer productivity."
     href="/docs/cursor/overview"
     icon={<Image src={cursorIcon} alt="Cursor icon" width={24} height={24} />}
+  />
+  <Card
+    title="CodeRabbit"
+    description="Follow our project setup and pull request workflow for CodeRabbit reviews."
+    href="/docs/coderabbit"
+    icon={<Image src={coderabbitIcon} alt="CodeRabbit icon" width={24} height={24} />}
   />
 </Cards>
