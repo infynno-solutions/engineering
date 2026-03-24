@@ -1,10 +1,11 @@
 import { RootProvider } from "fumadocs-ui/provider/next";
 import "./global.css";
-import { Inter } from "next/font/google";
+import { Google_Sans_Flex as FontSans } from "next/font/google";
 import type { Metadata } from "next";
 
-const inter = Inter({
+const fontSans = FontSans({
   subsets: ["latin"],
+  variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={inter.className} suppressHydrationWarning>
+    <html lang="en" className={fontSans.className} suppressHydrationWarning>
       <head>
         <script
           async
