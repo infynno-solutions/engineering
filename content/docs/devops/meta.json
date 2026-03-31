@@ -1,4 +1,11 @@
 {
   "title": "DevOps",
-  "pages": ["index", "docker", "kubernetes", "github-actions", "laravel-ecs-fargate"]
+  "pages": [
+    "index",
+    "docker",
+    "kubernetes",
+    "github-actions",
+    "laravel-ecs-fargate",
+    "production-server-checklist"
+  ]
 }

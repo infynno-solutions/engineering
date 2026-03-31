@@ -1,0 +1,578 @@
+---
+title: Production server setup checklist
+description: Production checklist by phase—before deployment, while deploying, after deployment, and after an incident.
+---
+
+# Production server setup checklist
+
+<div className="not-prose mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+  <div className="m-0 max-w-2xl text-sm leading-relaxed text-fd-muted-foreground">
+    Work through tasks in order by phase. Check items as you go—progress is saved in this browser until you use <strong>Reset checklist</strong>.
+  </div>
+  <ResetChecklistButton />
+</div>
+
+## Before deployment
+
+### Environment variables
+
+<Checklist>
+  <ChecklistItem title="Verify production environment variables">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        The <strong>project lead</strong> is responsible for correct and complete values.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        <strong>DevOps</strong> confirms variables are present and wired in the deployment target (containers, systemd, platform config, etc.).
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem id="prod-debug-off" title="Turn off debug in production">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Set <strong>APP_DEBUG=false</strong> (or equivalent) and <strong>APP_ENV=production</strong>; never ship with debug enabled on public traffic.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Block or remove <strong>developer tools</strong> (Telescope, debugbar, route dumps) from production builds or protect them like internal admin surfaces.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Secrets and version control
+
+<Checklist>
+  <ChecklistItem id="secrets-no-git" title="Keep secrets out of the repository">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Do not commit <strong>API keys</strong>, <strong>database passwords</strong>, <strong>APP_KEY</strong>, or provider tokens—use environment injection, a <strong>secret manager</strong> (for example AWS Secrets Manager, SSM Parameter Store, or your host’s vault), or encrypted CI secrets.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Rotate any credential that was ever committed or leaked; scan history if needed.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Runtime parity and lockfiles
+
+<Checklist>
+  <ChecklistItem title="Match local runtimes to production">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Same <strong>PHP</strong> version (and extensions where it matters).
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Same <strong>database</strong> engine and major version.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Same <strong>Redis</strong>, <strong>Node</strong> (front-end builds), and other stack pieces the app depends on.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Document any intentional differences in the project README or runbook.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem title="Keep lockfiles committed and current">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Commit <code>composer.lock</code> and your JS lockfile (<code>package-lock.json</code>, <code>pnpm-lock.yaml</code>, or <code>bun.lock</code>).
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Local, CI, and production must resolve the <strong>same dependency versions</strong>.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Regenerate and merge lockfiles when PHP/Node requirements or package versions change.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem title="Run current stable runtimes or agreed LTS">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Prefer <strong>latest stable</strong> or your org’s <strong>LTS</strong> for PHP, database, Redis, Node, and other primary runtimes.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Plan upgrades so <strong>every environment</strong> moves together and parity is preserved.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Record any exceptions in the project docs.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Dependency and vulnerability scanning
+
+<Checklist>
+  <ChecklistItem id="vuln-scanning-snyk-dependabot" title="Enable Snyk or Dependabot">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Enable a team-standard tool such as <a href="https://snyk.io/">Snyk</a> and/or <a href="https://docs.github.com/en/code-security/dependabot">GitHub Dependabot</a> on repositories that ship to production.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Cover <strong>application dependencies</strong> (for example Composer, npm) and, where relevant, <strong>container images</strong> and infrastructure definitions.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Route findings into your normal triage workflow (issues, Slack/Discord, or sprint) so critical alerts are not ignored.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Cost and budgets
+
+<Checklist>
+  <ChecklistItem id="cloud-budgets" title="Create cloud budgets and billing alerts">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Create <strong>budgets</strong> and forecast or threshold alerts for production (for example <a href="https://aws.amazon.com/aws-cost-management/aws-budgets/">AWS Budgets</a> on AWS, or your cloud’s equivalent).
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Send notifications to <strong>email</strong>, <strong>Discord</strong>, or your finance/ops channel so unexpected spend is caught early.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Align budgets with <strong>tags</strong> or accounts (environment, service, owner) where your provider supports it.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Network access and firewalls
+
+<Checklist>
+  <ChecklistItem title="Restrict SSH and database to allowlisted IPs">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        <strong>SSH</strong>: allow only known IP ranges (office egress, VPN, bastion)—avoid open internet on port 22 except a rare, documented exception.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        <strong>Databases</strong>: disable public access where the platform allows; restrict inbound to app subnets, bastions, or explicitly allowlisted IPs (security groups / firewall rules).
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Document the allowlist; review when people, offices, or networks change.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem title="Apply default-deny firewall rules">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Allow only inbound/outbound paths the service needs (for example HTTP/HTTPS from the load balancer; app → database/Redis on private networks).
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Apply on <strong>host</strong> firewalls (where used) and <strong>cloud</strong> controls (security groups, network ACLs, managed firewalls).
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Document rules; revisit after architecture or vendor changes.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Security headers and CORS
+
+<Checklist>
+  <ChecklistItem id="security-headers-config" title="Configure HTTP security headers">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Set headers at Nginx, load balancer, or application—follow current best practice.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        You will scan the live site <strong>after deployment</strong> (see below).
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem id="security-cors" title="Configure CORS with an allowlist">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Define <strong>CORS</strong> on APIs and browser-facing origins with an <strong>allowlist</strong> of schemes, hosts, and ports—avoid <code>*</code> with credentials.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Allow only the <strong>HTTP methods</strong> and <strong>headers</strong> the front end actually needs; review when adding new clients or subdomains.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### TLS and HTTPS
+
+<Checklist>
+  <ChecklistItem id="tls-production" title="Serve the app over HTTPS with managed certificates">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Terminate <strong>TLS</strong> at the load balancer, reverse proxy, or platform (for example <strong>ACM</strong> on AWS) with a <strong>valid certificate</strong> for every public hostname.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Redirect <strong>HTTP to HTTPS</strong>; set renewal or expiry <strong>alerts</strong> if certificates are not fully automatic.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### CDN and static assets
+
+<Checklist>
+  <ChecklistItem id="cdn-static-assets" title="Put static assets behind a CDN">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Put <strong>static assets</strong> (for example JS, CSS, images, fonts, and public uploads served as files) behind a <strong>CDN</strong> such as <a href="https://aws.amazon.com/cloudfront/">Amazon CloudFront</a> or <a href="https://www.cloudflare.com/">Cloudflare</a> (or another provider your stack standardizes on).
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Configure <strong>origins</strong> and <strong>cache behavior</strong> so immutable build assets cache aggressively while HTML or API responses follow the correct policy.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Serve the CDN over <strong>HTTPS</strong> with a valid certificate; use your DNS or provider’s docs for custom domains and propagation.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### DNS
+
+<Checklist>
+  <ChecklistItem id="dns-change-policy" title="Plan DNS changes and choose a provider">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Schedule <strong>DNS updates</strong> when there is <strong>time to verify</strong>—avoid urgent changes during <strong>rush or peak hours</strong> when mistakes are costly and rollback is harder.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Remember that DNS can take <strong>time to propagate</strong> (TTL, caching resolvers, and provider delays vary); plan overlap or low-traffic windows when cutting over records.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Host DNS on a managed provider when possible—prefer <a href="https://aws.amazon.com/route53/">Amazon Route 53</a> (AWS) or <a href="https://www.cloudflare.com/dns/">Cloudflare DNS</a> unless the project already standardizes elsewhere.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Database backups
+
+<Checklist>
+  <ChecklistItem title="Enable daily database backups">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Enable <strong>daily</strong> automated backups for the production database.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Retain backups for at least <strong>7 days</strong> unless policy explicitly allows a shorter window.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem id="backup-restore-test" title="Prove backups with a restore test">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        On a schedule (for example quarterly) or after changing backup tooling, <strong>restore</strong> to a non-production instance and confirm data and app connectivity.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Document who runs the drill and how long it took; fix gaps in backup scope or runbooks.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Transactional email
+
+<Checklist>
+  <ChecklistItem id="transactional-email-dns-limits" title="Set up transactional email and DNS auth">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Send production mail through a proper <strong>transactional</strong> provider—examples include <a href="https://aws.amazon.com/ses/">Amazon SES</a>, <a href="https://sendgrid.com/">SendGrid</a>, or <a href="https://resend.com/">Resend</a>—not an ad-hoc SMTP server unless policy allows.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Configure <strong>SPF</strong>, <strong>DKIM</strong>, and <strong>DMARC</strong> for the sending domain so deliverability and spoofing protection are in place; follow your provider’s DNS guidance.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Apply <strong>rate limits</strong> at the provider and in the application (per user, per IP, or per tenant) to control abuse and protect reputation.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Laravel production defaults
+
+<Checklist>
+  <ChecklistItem title="Use Redis for queue, session, and related drivers">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Use <strong>Redis</strong> for <strong>queue</strong>, <strong>session</strong>, and other drivers Redis supports (for example <strong>cache</strong>, <strong>broadcasting</strong>).
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Avoid file or database drivers for these when Redis is available.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem title="Run Laravel Horizon in production">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Run Horizon for queue workers and the Horizon dashboard.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Restrict the Horizon UI to trusted admins (authentication and authorization).
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem title="Protect the production log viewer">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Provide a production log viewer using the team’s standard package or tool.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Enforce <strong>admin-only</strong> access: authentication, authorization, and/or network restrictions.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        This is <strong>mandatory</strong>, not optional.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Load testing
+
+<Checklist>
+  <ChecklistItem id="load-testing-k6" title="Run load tests before high-traffic releases">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Run <strong>load tests</strong> before major launches, big marketing events, or large architectural changes so you know limits and failure modes.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Use <a href="https://grafana.com/oss/k6/">Grafana k6</a> (or an equivalent tool the team agrees on); script realistic scenarios and watch app, database, and queue metrics during the run.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Document baseline results and revisit after meaningful scale or code-path changes.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Application monitoring
+
+Choose **Sentry** and/or **Laravel Nightwatch** per project; tick the option (or both) your app uses.
+
+<Checklist>
+  <ChecklistItem id="monitoring-sentry" title="Option: Sentry">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Enable <a href="https://sentry.io/">Sentry</a> in production with your framework’s Sentry SDK (works for Laravel and many other stacks).
+      </ChecklistDetail>
+      <ChecklistDetail>
+        <strong>Error</strong> logging: exceptions and failures.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        <strong>Request</strong> logging: HTTP transactions, tracing, or performance monitoring.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        <strong>Query</strong> logging: database query spans or slow-query visibility (per SDK and integrations).
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem id="monitoring-nightwatch" title="Option: Laravel Nightwatch">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        For <strong>Laravel</strong>, enable <a href="https://nightwatch.laravel.com/">Laravel Nightwatch</a> in production per the official docs.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        <strong>Error</strong> logging: exceptions and failures.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        <strong>Request</strong> logging: HTTP transactions, tracing, or performance monitoring.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        <strong>Query</strong> logging: database query visibility (per Nightwatch configuration and docs).
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Infrastructure monitoring and Discord
+
+<Checklist>
+  <ChecklistItem title="Monitor CPU and memory per server">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Monitor <strong>CPU</strong> and <strong>memory</strong> usage.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Alert when usage crosses agreed thresholds.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Send alerts to <strong>email</strong> and/or <strong>Discord</strong> (or your team’s standard channel).
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem id="disk-monitoring" title="Alert on disk and storage usage">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Monitor <strong>disk space</strong> (and volume growth where you use attached storage) so full disks do not take the app down silently.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Include databases, job servers, and log partitions; tune thresholds below 100% so you have time to react.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem title="Configure uptime monitoring">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Monitor production URLs and critical health checks.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Use a dedicated service (for example <a href="https://betterstack.com/better-uptime">Better Uptime</a>) or equivalent.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Route alerts so the team is notified on incidents.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem id="discord-notifications" title="Wire Discord for Sentry, uptime, and other alerts">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Configure <strong>Discord</strong> as a destination for operational alerts—use <a href="https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks">incoming webhooks</a> or each product’s native Discord integration where available.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Connect <strong>Sentry</strong> (or your chosen error/monitoring tool) so new issues, regressions, or alert rules can post to the right channel.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Connect <strong>uptime monitoring</strong> (for example Better Uptime) so incident start, resolve, and escalation notices reach Discord.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Extend the same pattern to <strong>other services</strong> your stack uses (CI/CD failures, cloud or billing alerts, database or queue monitors)—keep channels scoped (for example per environment or per severity) if that helps noise control.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Incident runbook
+
+<Checklist>
+  <ChecklistItem id="incident-runbook" title="Write the incident runbook">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Maintain a short <strong>runbook</strong> for production: how to reach on-call, where to check first (uptime, Sentry, logs, metrics), how to scale or roll back, and who approves customer comms.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Link to dashboards, log views, and deploy docs so responders are not guessing under pressure.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+## While deploying
+
+### Reverse proxy
+
+<Checklist>
+  <ChecklistItem title="Configure Nginx logging and limits">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        If the server uses <strong>Nginx</strong>, configure <strong>access</strong> and <strong>error</strong> logs, log format, and rotation or forwarding as required.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Tune <strong>limits</strong>: client body size, timeouts, worker connections, rate limiting (where policy applies).
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Release execution
+
+<Checklist>
+  <ChecklistItem id="deploy-pipeline" title="Run the production release process">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Follow the project’s <strong>deploy pipeline</strong> (CI/CD, container rollout, or host deploy)—use protected branches, approvals, and change records if your org requires them.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Run <strong>database migrations</strong> and other release steps in the agreed order; avoid manual drift from what is documented.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem id="deploy-rollback" title="Know how to roll back this release">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Before or during deploy, confirm the <strong>rollback path</strong> (previous image or release, redeploy tag, migration downgrade policy, or feature flag)—especially when migrations are <strong>destructive</strong> or irreversible.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Document who can approve rollback and how to communicate status to stakeholders.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+  <ChecklistItem id="deploy-dns-cutover" title="Execute DNS cutover when this release includes it">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        If this deployment includes <strong>DNS</strong> changes, apply them in the planned window and monitor propagation.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Confirm TTL and rollback steps before switching traffic.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+## After deployment
+
+### Smoke checks
+
+<Checklist>
+  <ChecklistItem id="deploy-smoke-tests" title="Run post-deploy smoke tests">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Hit <strong>health checks</strong> and a short set of <strong>critical user flows</strong> (login, core API, checkout, or your app’s equivalent).
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Confirm the deployed <strong>version or build</strong> matches what you intended (release tag, image digest, or deploy artifact).
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Security verification
+
+<Checklist>
+  <ChecklistItem id="security-headers-scan" title="Scan security headers on production">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        On the <a href="https://securityheaders.com/">Security Headers</a> site, enter your production site URL (for example <code>https://example.com</code>) and run the scan.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Fix any reported gaps.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+### Monitoring verification
+
+<Checklist>
+  <ChecklistItem id="monitoring-verify-after-deploy" title="Confirm monitoring and notifications">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        Trigger or review a <strong>test alert</strong> path where safe (for example Sentry test event, uptime check recovery, or non-prod channel) so Discord or email routing works.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Glance at <strong>dashboards</strong> for error rate, latency, and resource use right after deploy.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+## After an incident
+
+### Postmortem
+
+<Checklist>
+  <ChecklistItem id="incident-postmortem" title="Run a blameless postmortem">
+    <ChecklistDetails>
+      <ChecklistDetail>
+        For <strong>significant</strong> outages or data-impacting events, run a <strong>postmortem</strong> (blameless): timeline, root cause, what went well, what to improve, and tracked action items.
+      </ChecklistDetail>
+      <ChecklistDetail>
+        Share learnings with the team and update the runbook or checklist when gaps surface.
+      </ChecklistDetail>
+    </ChecklistDetails>
+  </ChecklistItem>
+</Checklist>
+
+## References
+
+### Internal
+
+- [DevOps Stack](/docs/devops)
+- [Laravel on ECS (Fargate)](/docs/devops/laravel-ecs-fargate)
